@@ -5,21 +5,32 @@ import { Fragment } from "react";
 import MainHeader from "./MainHeader";
 import NavLinks from "./NavLinks";
 import SideDrawer from "./SideDrawer";
+import Backdrop from "../UIElements/Backdrop";
 import "./MainNavigation.css";
 
 function MainNavigation(props) {
   const [drawerIsOpen, setDrawerIsOpen] = useState(false);
+
+  const openDrawer = () => {
+    setDrawerIsOpen(true);
+  };
+
+  const closeDrawer = () => {
+    setDrawerIsOpen(false);
+  };
+
   return (
     <Fragment>
-      {
+      {drawerIsOpen && (
         <SideDrawer>
           <nav className="main-navigation__drawer-nav">
             <NavLinks />
           </nav>
         </SideDrawer>
-      }
+      )}
+      {drawerIsOpen && <Backdrop onClick={closeDrawer} />}
       <MainHeader>
-        <button className="main-navigation__menu-btn">
+        <button className="main-navigation__menu-btn" onClick={openDrawer}>
           <span />
           <span />
           <span />
