@@ -21,13 +21,12 @@ function MainNavigation(props) {
 
   return (
     <Fragment>
-      {drawerIsOpen && (
-        <SideDrawer>
-          <nav className="main-navigation__drawer-nav">
-            <NavLinks />
-          </nav>
-        </SideDrawer>
-      )}
+      <SideDrawer show={drawerIsOpen} close={closeDrawer}>
+        <nav className="main-navigation__drawer-nav">
+          <NavLinks />
+        </nav>
+      </SideDrawer>
+
       {drawerIsOpen && <Backdrop onClick={closeDrawer} />}
       <MainHeader>
         <button className="main-navigation__menu-btn" onClick={openDrawer}>
