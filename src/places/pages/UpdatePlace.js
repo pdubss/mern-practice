@@ -1,18 +1,20 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import Input from "../../shared/components/FormElements/Input";
 import Button from "../../shared/components/FormElements/Button";
+import Card from "../../user/components/UIElements/Card";
 import {
   VALIDATOR_REQUIRE,
   VALIDATOR_MINLENGTH,
 } from "../../shared/components/FormElements/util/validators";
 
+import { useForm } from "../../shared/hooks/form-hook";
 import "./PlaceForm.css";
 
 const DUMMY_PLACES = [
   {
     id: "p1",
-    title: "empire state building",
+    title: "Empire State building",
     description: "One of the most famous buildings in the world.",
     imageURL:
       "https://www.history.com/.image/ar_1:1%2Cc_fill%2Ccs_srgb%2Cfl_progressive%2Cq_auto:good%2Cw_1200/MTU3ODc3NjU2NzUxNTgwODk1/this-day-in-history-05011931---empire-state-building-dedicated.jpg",
@@ -25,7 +27,7 @@ const DUMMY_PLACES = [
   },
   {
     id: "p2",
-    title: "empire state building",
+    title: "Emp. State building",
     description: "One of the most famous buildings in the world.",
     imageURL:
       "https://www.history.com/.image/ar_1:1%2Cc_fill%2Ccs_srgb%2Cfl_progressive%2Cq_auto:good%2Cw_1200/MTU3ODc3NjU2NzUxNTgwODk1/this-day-in-history-05011931---empire-state-building-dedicated.jpg",
@@ -43,16 +45,54 @@ const UpdatePlace = () => {
 
   const foundPlace = DUMMY_PLACES.find((p) => p.id === placeId);
 
+  const [formState, inputHandler, setFormData] = useForm(
+    {
+      title: {
+        value: foundPlace.title,
+        isValid: true,
+      },
+      description: {
+        value: foundPlace.description,
+        isValid: true,
+      },
+    },
+    true
+  );
+  useEffect(() => {
+    if (foundPlace.title) {
+      setFormData(
+        {
+          title: {
+            value: foundPlace.title,
+            isValid: true,
+          },
+          description: {
+            value: foundPlace.description,
+            isValid: true,
+          },
+        },
+        true
+      );
+    }
+  }, [setFormData, foundPlace]);
+
+  const updateSubmitHandler = (event) => {
+    event.preventDefault();
+    console.log(formState.inputs);
+  };
+
   if (!foundPlace) {
     return (
       <div className="center">
-        <h2>Place not found!</h2>
+        <Card>
+          <h2>Place not found!</h2>
+        </Card>
       </div>
     );
   }
 
   return (
-    <form className="place-form">
+    <form className="place-form" onSubmit={updateSubmitHandler}>
       <Input
         id="title"
         element="input"
@@ -60,9 +100,9 @@ const UpdatePlace = () => {
         label="Title"
         validators={[VALIDATOR_REQUIRE()]}
         errorText="Please enter a valid title."
-        onInput={() => {}}
-        value={foundPlace.title}
-        valid={true}
+        onInput={inputHandler}
+        initialValue={formState.inputs.title.value}
+        initialValid={formState.inputs.title.isValid}
       />
       <Input
         id="description"
@@ -70,11 +110,12 @@ const UpdatePlace = () => {
         label="Description"
         validators={[VALIDATOR_MINLENGTH(5)]}
         errorText="Please enter a description with at least 5 characters."
-        value={foundPlace.description}
-        valid={true}
-        onInput={() => {}}
+        initialValue={formState.inputs.description.value}
+        initialValid={formState.inputs.description.isValid}
+        onInput={inputHandler}
       />
-      <Button type="submit" disabled={true}>
+
+      <Button type="submit" disabled={!formState.isValid}>
         UPDATE PLACE
       </Button>
     </form>
